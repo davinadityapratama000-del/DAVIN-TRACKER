@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <link rel="manifest" href="manifest.json">
+
+<title>DAVIN TRACKER</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="manifest" href="manifest.json">
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+<style>
+
+body{
+margin:0;
+background:black;
+color:#00ff00;
+font-family:monospace;
+text-align:center;
+}
+
+/* MATRIX */
+
+canvas{
+position:fixed;
+top:0;
+left:0;
+z-index:-1;
+}
+
+/* LOGIN BOX */
+
+#loginBox{
+margin-top:120px;
+}
+
+input{
+background:black;
+border:1px solid #00ff00;
+color:#00ff00;
+padding:10px;
+font-family:monospace;
+}
+
+button{
+background:black;
+border:1px solid #00ff00;
+color:#00ff00;
+padding:10px 20px;
+cursor:pointer;
+}
+
+button:hover{
+background:#00ff00;
+color:black;
+}
+
+/* STATUS */
+
+#status{
+margin-top:20px;
+font-size:18px;
+}
+
+/* MAP */
+
+#map{
+height:400px;
+width:90%;
+margin:auto;
+margin-top:20px;
+border:2px solid #00ff00;
+}
+
+/* IMAGE */
+
+img{
+width:220px;
+margin-top:20px;
+}
+
+#terminal{
+margin-top:20px;
+font-size:18px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<canvas id="matrix"></canvas>
+
+<!-- LOGIN -->
+
+<div id="loginBox">
+
+<h2>SECURE ACCESS TERMINAL</h2>
+
+<input id="user" placeholder="USER ID"><br><br>
+<input id="pass" type="password" placeholder="PASSWORD"><br><br>
+
+<button onclick="login()">LOGIN</button>
+
+<div id="status"></div>
+
+</div>
+
+<!-- TRACKER LAPTOP -->
+
+<div id="tracker" style="display:none">
+
+<img src="HACKER.jpeg">
+
+<div id="terminal"></div>
+
+<h3>DATA ANDA SEDANG DIAWASI OLEH</h3>
+<h2>DAVIN ADITYA PRATAMA</h2>
+
+<div id="map"></div>
+
+</div>
+
+<!-- HP SCREEN -->
+
+<div id="mobileScreen" style="display:none">
+
+<img src="HACKER.jpeg">
+
+<h2 style="margin-top:40px">
+DATA ANDA SEDANG DIAWASI OLEH
+</h2>
+
+<h1>
+DAVIN ADITYA PRATAMA
+</h1>
+
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+
+/* DETECT MOBILE */
+
+if(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)){
+
+document.getElementById("loginBox").style.display="none"
+document.getElementById("mobileScreen").style.display="block"
+
+}
+
+/* LOGIN */
+
+function login(){
+
+var u=document.getElementById("user").value
+var p=document.getElementById("pass").value
+var status=document.getElementById("status")
+
+if(u=="DAVIN.ADITYA" && p=="321654"){
+
+status.innerHTML="ACCESS GRANTED"
+
+setTimeout(function(){
+
+document.getElementById("loginBox").style.display="none"
+startTracker()
+
+},1000)
+
+}else{
+
+status.innerHTML="ACCESS DENIED"
+
+}
+
+}
+
+/* TERMINAL */
+
+function typeText(){
+
+var text=[
+"INITIALIZING SYSTEM...",
+"CONNECTING SATELLITE...",
+"TRACKING DEVICE...",
+"GPS SIGNAL LOCKED...",
+"SYSTEM READY..."
+]
+
+let i=0
+let terminal=document.getElementById("terminal")
+
+function next(){
+
+if(i<text.length){
+
+let line=document.createElement("div")
+terminal.appendChild(line)
+
+let j=0
+let word=text[i]
+
+let interval=setInterval(function(){
+
+line.innerHTML+=word[j]
+j++
+
+if(j>=word.length){
+clearInterval(interval)
+i++
+setTimeout(next,500)
+}
+
+},40)
+
+}
+
+}
+
+next()
+
+}
+
+/* MAP */
+
+function startMap(){
+
+navigator.geolocation.getCurrentPosition(function(pos){
+
+var lat=pos.coords.latitude
+var lon=pos.coords.longitude
+
+var map=L.map('map').setView([lat,lon],17)
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+maxZoom:19
+}).addTo(map)
+
+L.marker([lat,lon]).addTo(map)
+.bindPopup("LOKASI HP")
+.openPopup()
+
+})
+
+}
+
+function startTracker(){
+
+document.getElementById("tracker").style.display="block"
+
+typeText()
+
+setTimeout(startMap,500)
+
+}
+
+/* MATRIX */
+
+var canvas=document.getElementById("matrix")
+var ctx=canvas.getContext("2d")
+
+canvas.height=window.innerHeight
+canvas.width=window.innerWidth
+
+var letters="01"
+letters=letters.split("")
+
+var fontSize=14
+var columns=canvas.width/fontSize
+
+var drops=[]
+
+for(var x=0;x<columns;x++)
+drops[x]=1
+
+function draw(){
+
+ctx.fillStyle="rgba(0,0,0,0.05)"
+ctx.fillRect(0,0,canvas.width,canvas.height)
+
+ctx.fillStyle="#0F0"
+ctx.font=fontSize+"px monospace"
+
+for(var i=0;i<drops.length;i++){
+
+var text=letters[Math.floor(Math.random()*letters.length)]
+
+ctx.fillText(text,i*fontSize,drops[i]*fontSize)
+
+if(drops[i]*fontSize>canvas.height && Math.random()>0.975)
+drops[i]=0
+
+drops[i]++
+
+}
+
+}
+
+setInterval(draw,33)
+
+</script>
+<script>
+
+if ("serviceWorker" in navigator) {
+navigator.serviceWorker.register("service-worker.js")
+}
+
+</script>
+
+</body>
+</html>
